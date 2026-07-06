@@ -3,7 +3,7 @@
   "info": {
     "title": "Ward Activity Board API",
     "version": "1.0.0",
-    "description": "CRUD and volunteer API. Sign in at /auth/github first; the browser session cookie authenticates protected Swagger requests."
+    "description": "CRUD and participant RSVP API. Sign in at /auth/github first; the browser session cookie authenticates protected Swagger requests."
   },
   "servers": [
     {
@@ -16,8 +16,8 @@
       "description": "Activity CRUD operations"
     },
     {
-      "name": "Volunteers",
-      "description": "Volunteer signup operations"
+      "name": "Participants",
+      "description": "Activity RSVP operations"
     },
     {
       "name": "Users",
@@ -87,10 +87,22 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "Complete activity data. `createdBy` and `participants` come from authenticated users and must not be submitted.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ActivityInput"
+              },
+              "example": {
+                "title": "Ward Summer Social",
+                "description": "Dinner, lawn games, and time to visit with ward members and neighbors.",
+                "category": "ward social",
+                "date": "2030-07-20",
+                "time": "18:30",
+                "location": "Meetinghouse lawn",
+                "organizer": "Activities Committee",
+                "participantLimit": 80,
+                "status": "open"
               }
             }
           }
@@ -202,10 +214,22 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "PUT replaces all editable activity fields, so send the complete object.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ActivityInput"
+              },
+              "example": {
+                "title": "Ward Summer Social and Potluck",
+                "description": "Bring a side dish or dessert. Dinner and lawn games begin at 6:30 PM.",
+                "category": "ward social",
+                "date": "2030-07-27",
+                "time": "18:30",
+                "location": "Meetinghouse cultural hall",
+                "organizer": "Activities Committee",
+                "participantLimit": 100,
+                "status": "open"
               }
             }
           }
@@ -331,12 +355,12 @@
         }
       }
     },
-    "/activities/{id}/volunteer": {
+    "/activities/{id}/participants": {
       "post": {
         "tags": [
-          "Volunteers"
+          "Participants"
         ],
-        "summary": "Volunteer for an activity",
+        "summary": "RSVP the current user to an activity",
         "security": [
           {
             "cookieAuth": []
@@ -355,7 +379,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Volunteer added",
+            "description": "Participant added",
             "content": {
               "application/json": {
                 "schema": {
@@ -395,7 +419,7 @@
             }
           },
           "409": {
-            "description": "Already signed up, full, or closed",
+            "description": "Already attending, full, or closed",
             "content": {
               "application/json": {
                 "schema": {
@@ -408,9 +432,9 @@
       },
       "delete": {
         "tags": [
-          "Volunteers"
+          "Participants"
         ],
-        "summary": "Remove the current user volunteer signup",
+        "summary": "Cancel the current user RSVP",
         "security": [
           {
             "cookieAuth": []
@@ -429,7 +453,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Volunteer removed",
+            "description": "Participant removed",
             "content": {
               "application/json": {
                 "schema": {
@@ -459,7 +483,7 @@
             }
           },
           "404": {
-            "description": "Activity or signup not found",
+            "description": "Activity or RSVP not found",
             "content": {
               "application/json": {
                 "schema": {

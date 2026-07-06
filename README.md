@@ -1,6 +1,6 @@
 # Ward Activity Board
 
-A student-scale full-stack activity board built with Node.js, Express, MongoDB Atlas, Mongoose, EJS, GitHub OAuth, and Swagger. Users can browse activities publicly. Authenticated users can create activities and volunteer; only the activity owner or an administrator can edit or delete an activity.
+A student-scale full-stack activity board built with Node.js, Express, MongoDB Atlas, Mongoose, EJS, GitHub OAuth, and Swagger. Users can browse activities publicly. Authenticated users can create activities and RSVP as participants; only the activity owner or an administrator can edit or delete an activity.
 
 ## Course requirement coverage
 
@@ -58,15 +58,15 @@ Never commit `.env`. It is ignored by Git.
 | POST | `/api/activities` | Authenticated |
 | PUT | `/api/activities/:id` | Owner or admin |
 | DELETE | `/api/activities/:id` | Owner or admin |
-| POST | `/api/activities/:id/volunteer` | Authenticated |
-| DELETE | `/api/activities/:id/volunteer` | Authenticated |
+| POST | `/api/activities/:id/participants` | Authenticated |
+| DELETE | `/api/activities/:id/participants` | Authenticated |
 | GET | `/api/users/me` | Authenticated |
 
 To test protected endpoints in Swagger, first open `/auth/github` in the same browser and log in. Swagger requests then use the secure session cookie.
 
 ## Validation and security
 
-Activity input is allow-listed. Required strings are trimmed and length-limited; category and status use enums; date must be today or later; time uses 24-hour `HH:mm`; and volunteer count must be a non-negative integer. MongoDB IDs are validated before controller execution.
+Activity input is allow-listed. Required strings are trimmed and length-limited; category and status use enums; date must be today or later; time uses 24-hour `HH:mm`; and participant limit must be a non-negative integer. MongoDB IDs are validated before controller execution.
 
 Security controls include Helmet headers, rate limiting, 20 KB body limits, server-side MongoDB sessions, `httpOnly`/`sameSite` cookies (`secure` in production), OAuth rather than local passwords, environment-only secrets, authentication checks, owner/admin authorization, and generic production-safe HTTP errors.
 

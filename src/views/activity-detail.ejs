@@ -9,12 +9,21 @@
     <div><dt>Time</dt><dd><%= activity.time %></dd></div>
     <div><dt>Location</dt><dd><%= activity.location %></dd></div>
     <div><dt>Organizer</dt><dd><%= activity.organizer %></dd></div>
-    <div><dt>Volunteers</dt><dd><%= activity.volunteers.length %> / <%= activity.volunteersNeeded || 'unlimited' %></dd></div>
+    <div><dt>Expected attendance</dt><dd><%= activity.participants.length %><%= activity.participantLimit ? ' / ' + activity.participantLimit : '' %></dd></div>
     <div><dt>Created by</dt><dd><%= activity.createdBy.name %></dd></div>
   </dl>
-  <% if (activity.volunteers.length) { %>
-    <h2>Volunteers</h2>
-    <ul><% activity.volunteers.forEach((volunteer) => { %><li><%= volunteer.name %></li><% }) %></ul>
+  <% if (currentUser && !['completed', 'cancelled'].includes(activity.status)) { %>
+    <div class="actions">
+      <% if (isParticipating) { %>
+        <form action="/activities/<%= activity.id %>/participants?_method=DELETE" method="post"><button class="button danger" type="submit">Cancel RSVP</button></form>
+      <% } else if (activity.status !== 'full') { %>
+        <form action="/activities/<%= activity.id %>/participants" method="post"><button class="button" type="submit">RSVP</button></form>
+      <% } %>
+    </div>
+  <% } %>
+  <% if (activity.participants.length) { %>
+    <h2>Participants</h2>
+    <ul><% activity.participants.forEach((participant) => { %><li><%= participant.name %></li><% }) %></ul>
   <% } %>
   <% if (canManage) { %>
     <div class="actions">

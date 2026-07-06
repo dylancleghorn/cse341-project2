@@ -26,8 +26,8 @@ const activitySchema = new mongoose.Schema({
   location: { type: String, required: true, trim: true, maxlength: 200 },
   organizer: { type: String, required: true, trim: true, maxlength: 100 },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-  volunteersNeeded: { type: Number, min: 0, default: 0 },
-  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  participantLimit: { type: Number, min: 0, default: 0 },
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   status: { type: String, enum: statuses, default: 'planned' }
 }, { timestamps: true });
 

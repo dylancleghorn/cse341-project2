@@ -43,16 +43,16 @@ router.delete('/:id', requireAuth, idRule, handleValidation, controller.remove);
    #swagger.responses[204] = { description: 'Deleted' }
    #swagger.responses[403] = { schema: { $ref: '#/definitions/Error' } } */
 
-router.post('/:id/volunteer', requireAuth, idRule, handleValidation, controller.volunteer);
-/* #swagger.tags = ['Volunteers']
-   #swagger.summary = 'Volunteer for an activity'
+router.post('/:id/participants', requireAuth, idRule, handleValidation, controller.joinParticipants);
+/* #swagger.tags = ['Participants']
+   #swagger.summary = 'Join an activity'
    #swagger.security = [{ "cookieAuth": [] }]
    #swagger.responses[200] = { schema: { $ref: '#/definitions/Activity' } }
    #swagger.responses[409] = { schema: { $ref: '#/definitions/Error' } } */
 
-router.delete('/:id/volunteer', requireAuth, idRule, handleValidation, controller.unvolunteer);
-/* #swagger.tags = ['Volunteers']
-   #swagger.summary = 'Remove the current user volunteer signup'
+router.delete('/:id/participants', requireAuth, idRule, handleValidation, controller.leaveParticipants);
+/* #swagger.tags = ['Participants']
+   #swagger.summary = 'Remove the current user from an activity'
    #swagger.security = [{ "cookieAuth": [] }]
    #swagger.responses[200] = { schema: { $ref: '#/definitions/Activity' } }
    #swagger.responses[404] = { schema: { $ref: '#/definitions/Error' } } */

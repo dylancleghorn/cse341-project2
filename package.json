@@ -8,6 +8,7 @@
     "start": "node server.js",
     "swagger": "node swagger.js",
     "seed": "node scripts/seed.js",
+    "migrate:participants": "node scripts/migrate-participants.js",
     "check": "node scripts/check-syntax.js",
     "test": "npm run check && npm run swagger && node scripts/verify.js"
   },

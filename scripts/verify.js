@@ -11,13 +11,13 @@ async function verify() {
   const valid = new Activity({
     title: 'Test activity', description: 'A valid test activity.', category: 'service project',
     date: future, time: '09:00', location: 'Test location', organizer: 'Test organizer',
-    createdBy: new mongoose.Types.ObjectId(), volunteersNeeded: 2, status: 'open'
+    createdBy: new mongoose.Types.ObjectId(), participantLimit: 2, status: 'open'
   });
   await valid.validate();
 
-  const invalid = new Activity({ ...valid.toObject(), title: '', volunteersNeeded: -1, status: 'unknown' });
+  const invalid = new Activity({ ...valid.toObject(), title: '', participantLimit: -1, status: 'unknown' });
   await assert.rejects(() => invalid.validate(), (error) => Boolean(
-    error.errors.title && error.errors.volunteersNeeded && error.errors.status
+    error.errors.title && error.errors.participantLimit && error.errors.status
   ));
 
   const views = path.join(process.cwd(), 'src', 'views');

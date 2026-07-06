@@ -14,7 +14,7 @@
     <label>Time<input type="time" name="time" required value="<%= activity.time || '' %>"></label>
     <label>Location<input name="location" maxlength="200" required value="<%= activity.location || '' %>"></label>
     <label>Organizer<input name="organizer" maxlength="100" required value="<%= activity.organizer || currentUser.name %>"></label>
-    <label>Volunteers needed<input type="number" name="volunteersNeeded" min="0" step="1" value="<%= activity.volunteersNeeded ?? 0 %>"></label>
+    <label>Participant limit (0 = unlimited)<input type="number" name="participantLimit" min="0" step="1" value="<%= activity.participantLimit ?? 0 %>"></label>
     <div class="full"><button class="button" type="submit"><%= activity._id ? 'Save changes' : 'Create activity' %></button></div>
   </form>
 </section>

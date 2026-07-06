@@ -3,7 +3,7 @@ const { canManage } = require('../middleware/auth');
 
 const editableFields = [
   'title', 'description', 'category', 'date', 'time', 'location',
-  'organizer', 'volunteersNeeded', 'status'
+  'organizer', 'participantLimit', 'status'
 ];
 
 function pickActivity(body) {
@@ -19,7 +19,7 @@ async function list(req, res, next) {
     if (req.query.category) filter.category = req.query.category;
     if (req.query.status) filter.status = req.query.status;
     const activities = await Activity.find(filter)
-      .populate('createdBy', 'name email role').populate('volunteers', 'name email')
+      .populate('createdBy', 'name email role').populate('participants', 'name email')
       .sort({ date: 1, time: 1 });
     res.json(activities);
   } catch (error) { next(error); }
@@ -28,7 +28,7 @@ async function list(req, res, next) {
 async function getOne(req, res, next) {
   try {
     const activity = await Activity.findById(req.params.id)
-      .populate('createdBy', 'name email role').populate('volunteers', 'name email');
+      .populate('createdBy', 'name email role').populate('participants', 'name email');
     if (!activity) return res.status(404).json({ error: 'Activity not found.' });
     return res.json(activity);
   } catch (error) { return next(error); }
@@ -62,34 +62,34 @@ async function remove(req, res, next) {
   } catch (error) { return next(error); }
 }
 
-async function volunteer(req, res, next) {
+async function joinParticipants(req, res, next) {
   try {
     const activity = await Activity.findById(req.params.id);
     if (!activity) return res.status(404).json({ error: 'Activity not found.' });
     if (['completed', 'cancelled'].includes(activity.status)) {
-      return res.status(409).json({ error: 'This activity is not accepting volunteers.' });
+      return res.status(409).json({ error: 'This activity is not accepting participants.' });
     }
-    if (activity.volunteers.some((id) => id.equals(req.user.id))) {
-      return res.status(409).json({ error: 'You are already volunteering.' });
+    if (activity.participants.some((id) => id.equals(req.user.id))) {
+      return res.status(409).json({ error: 'You are already attending.' });
     }
-    if (activity.volunteersNeeded > 0 && activity.volunteers.length >= activity.volunteersNeeded) {
+    if (activity.participantLimit > 0 && activity.participants.length >= activity.participantLimit) {
       return res.status(409).json({ error: 'This activity is full.' });
     }
-    activity.volunteers.push(req.user.id);
-    if (activity.volunteersNeeded > 0 && activity.volunteers.length >= activity.volunteersNeeded) activity.status = 'full';
+    activity.participants.push(req.user.id);
+    if (activity.participantLimit > 0 && activity.participants.length >= activity.participantLimit) activity.status = 'full';
     await activity.save();
     return res.json(activity);
   } catch (error) { return next(error); }
 }
 
-async function unvolunteer(req, res, next) {
+async function leaveParticipants(req, res, next) {
   try {
     const activity = await Activity.findById(req.params.id);
     if (!activity) return res.status(404).json({ error: 'Activity not found.' });
-    const originalLength = activity.volunteers.length;
-    activity.volunteers = activity.volunteers.filter((id) => !id.equals(req.user.id));
-    if (activity.volunteers.length === originalLength) {
-      return res.status(404).json({ error: 'You are not volunteering for this activity.' });
+    const originalLength = activity.participants.length;
+    activity.participants = activity.participants.filter((id) => !id.equals(req.user.id));
+    if (activity.participants.length === originalLength) {
+      return res.status(404).json({ error: 'You are not attending this activity.' });
     }
     if (activity.status === 'full') activity.status = 'open';
     await activity.save();
@@ -97,4 +97,4 @@ async function unvolunteer(req, res, next) {
   } catch (error) { return next(error); }
 }
 
-module.exports = { list, getOne, create, update, remove, volunteer, unvolunteer, pickActivity };
+module.exports = { list, getOne, create, update, remove, joinParticipants, leaveParticipants, pickActivity };

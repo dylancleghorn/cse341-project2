@@ -16,8 +16,8 @@ async function seed() {
   date.setUTCDate(date.getUTCDate() + 14);
   date.setUTCHours(0, 0, 0, 0);
   await Activity.create([
-    { title: 'Community Park Cleanup', description: 'Bring gloves and help clean the neighborhood park.', category: 'service project', date, time: '09:00', location: 'Riverside Park', organizer: 'Ward Service Committee', createdBy: user.id, volunteersNeeded: 15, status: 'open' },
-    { title: 'Ward Summer Social', description: 'A casual outdoor dinner for ward members and neighbors.', category: 'ward social', date: new Date(date.getTime() + 7 * 86400000), time: '18:30', location: 'Meetinghouse lawn', organizer: 'Activities Committee', createdBy: user.id, volunteersNeeded: 6, status: 'planned' }
+    { title: 'Community Park Cleanup', description: 'Bring gloves and help clean the neighborhood park.', category: 'service project', date, time: '09:00', location: 'Riverside Park', organizer: 'Ward Service Committee', createdBy: user.id, participantLimit: 15, status: 'open' },
+    { title: 'Ward Summer Social', description: 'A casual outdoor dinner for ward members and neighbors.', category: 'ward social', date: new Date(date.getTime() + 7 * 86400000), time: '18:30', location: 'Meetinghouse lawn', organizer: 'Activities Committee', createdBy: user.id, participantLimit: 0, status: 'planned' }
   ]);
   console.log('Seeded one user and two activities.');
   await mongoose.disconnect();

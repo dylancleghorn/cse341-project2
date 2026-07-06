@@ -3,8 +3,31 @@ const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' });
 
 const host = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const json = (schema) => ({ 'application/json': { schema } });
+const jsonExample = (schema, example) => ({ 'application/json': { schema, example } });
 const activity = { $ref: '#/components/schemas/Activity' };
 const error = { $ref: '#/components/schemas/Error' };
+const createActivityExample = {
+  title: 'Ward Summer Social',
+  description: 'Dinner, lawn games, and time to visit with ward members and neighbors.',
+  category: 'ward social',
+  date: '2030-07-20',
+  time: '18:30',
+  location: 'Meetinghouse lawn',
+  organizer: 'Activities Committee',
+  participantLimit: 80,
+  status: 'open'
+};
+const updateActivityExample = {
+  title: 'Ward Summer Social and Potluck',
+  description: 'Bring a side dish or dessert. Dinner and lawn games begin at 6:30 PM.',
+  category: 'ward social',
+  date: '2030-07-27',
+  time: '18:30',
+  location: 'Meetinghouse cultural hall',
+  organizer: 'Activities Committee',
+  participantLimit: 100,
+  status: 'open'
+};
 const idParameter = { name: 'id', in: 'path', required: true, description: 'MongoDB activity id', schema: { type: 'string' } };
 const authErrors = {
   401: { description: 'Authentication required', content: json(error) },
@@ -14,12 +37,12 @@ const doc = {
   info: {
     title: 'Ward Activity Board API',
     version: '1.0.0',
-    description: 'CRUD and volunteer API. Sign in at /auth/github first; the browser session cookie authenticates protected Swagger requests.'
+    description: 'CRUD and participant RSVP API. Sign in at /auth/github first; the browser session cookie authenticates protected Swagger requests.'
   },
   servers: [{ url: `${host}/api` }],
   tags: [
     { name: 'Activities', description: 'Activity CRUD operations' },
-    { name: 'Volunteers', description: 'Volunteer signup operations' },
+    { name: 'Participants', description: 'Activity RSVP operations' },
     { name: 'Users', description: 'Authenticated user operations' }
   ],
   components: {
@@ -39,13 +62,13 @@ const doc = {
           category: { type: 'string', enum: ['service project','youth','relief society','elders quorum','ward social','devotional','temple trip','community','other'] },
           date: { type: 'string', format: 'date' }, time: { type: 'string', example: '09:00' },
           location: { type: 'string', example: 'Riverside Park' }, organizer: { type: 'string', example: 'Service Committee' },
-          volunteersNeeded: { type: 'integer', minimum: 0, example: 12 },
+          participantLimit: { type: 'integer', minimum: 0, example: 40, description: 'Maximum attendance; 0 means unlimited' },
           status: { type: 'string', enum: ['planned','open','full','completed','cancelled'] }
         }
       },
       Activity: { allOf: [
         { $ref: '#/components/schemas/ActivityInput' },
-        { type: 'object', properties: { _id: { type: 'string' }, createdBy: { $ref: '#/components/schemas/User' }, volunteers: { type: 'array', items: { $ref: '#/components/schemas/User' } }, createdAt: { type: 'string', format: 'date-time' }, updatedAt: { type: 'string', format: 'date-time' } } }
+        { type: 'object', properties: { _id: { type: 'string' }, createdBy: { $ref: '#/components/schemas/User' }, participants: { type: 'array', items: { $ref: '#/components/schemas/User' } }, createdAt: { type: 'string', format: 'date-time' }, updatedAt: { type: 'string', format: 'date-time' } } }
       ] },
       Error: { type: 'object', properties: { error: { type: 'string' }, details: { type: 'array', items: { type: 'object' } } } }
     }
@@ -69,7 +92,11 @@ const doc = {
       },
       post: {
         tags: ['Activities'], summary: 'Create an activity', security: [{ cookieAuth: [] }],
-        requestBody: { required: true, content: json({ $ref: '#/components/schemas/ActivityInput' }) },
+        requestBody: {
+          required: true,
+          description: 'Complete activity data. `createdBy` and `participants` come from authenticated users and must not be submitted.',
+          content: jsonExample({ $ref: '#/components/schemas/ActivityInput' }, createActivityExample)
+        },
         responses: {
           201: { description: 'Activity created', content: json(activity) },
           400: { description: 'Validation failed', content: json(error) },
@@ -84,7 +111,11 @@ const doc = {
       },
       put: {
         tags: ['Activities'], summary: 'Update an owned activity (admin may update any)', security: [{ cookieAuth: [] }], parameters: [idParameter],
-        requestBody: { required: true, content: json({ $ref: '#/components/schemas/ActivityInput' }) },
+        requestBody: {
+          required: true,
+          description: 'PUT replaces all editable activity fields, so send the complete object.',
+          content: jsonExample({ $ref: '#/components/schemas/ActivityInput' }, updateActivityExample)
+        },
         responses: { 200: { description: 'Activity updated', content: json(activity) }, 400: { description: 'Validation failed', content: json(error) }, ...authErrors, 404: { description: 'Activity not found', content: json(error) } }
       },
       delete: {
@@ -92,14 +123,14 @@ const doc = {
         responses: { 204: { description: 'Activity deleted' }, 400: { description: 'Invalid id', content: json(error) }, ...authErrors, 404: { description: 'Activity not found', content: json(error) } }
       }
     },
-    '/activities/{id}/volunteer': {
+    '/activities/{id}/participants': {
       post: {
-        tags: ['Volunteers'], summary: 'Volunteer for an activity', security: [{ cookieAuth: [] }], parameters: [idParameter],
-        responses: { 200: { description: 'Volunteer added', content: json(activity) }, 400: { description: 'Invalid id', content: json(error) }, 401: authErrors[401], 404: { description: 'Activity not found', content: json(error) }, 409: { description: 'Already signed up, full, or closed', content: json(error) } }
+        tags: ['Participants'], summary: 'RSVP the current user to an activity', security: [{ cookieAuth: [] }], parameters: [idParameter],
+        responses: { 200: { description: 'Participant added', content: json(activity) }, 400: { description: 'Invalid id', content: json(error) }, 401: authErrors[401], 404: { description: 'Activity not found', content: json(error) }, 409: { description: 'Already attending, full, or closed', content: json(error) } }
       },
       delete: {
-        tags: ['Volunteers'], summary: 'Remove the current user volunteer signup', security: [{ cookieAuth: [] }], parameters: [idParameter],
-        responses: { 200: { description: 'Volunteer removed', content: json(activity) }, 400: { description: 'Invalid id', content: json(error) }, 401: authErrors[401], 404: { description: 'Activity or signup not found', content: json(error) } }
+        tags: ['Participants'], summary: 'Cancel the current user RSVP', security: [{ cookieAuth: [] }], parameters: [idParameter],
+        responses: { 200: { description: 'Participant removed', content: json(activity) }, 400: { description: 'Invalid id', content: json(error) }, 401: authErrors[401], 404: { description: 'Activity or RSVP not found', content: json(error) } }
       }
     },
     '/users/me': {

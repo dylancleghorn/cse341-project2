@@ -16,7 +16,7 @@ const activityRules = [
   body('location').trim().notEmpty().withMessage('Location is required.').isLength({ max: 200 }),
   body('organizer').trim().notEmpty().withMessage('Organizer is required.').isLength({ max: 100 }),
   body('status').isIn(ACTIVITY_STATUSES).withMessage('Choose a valid status.'),
-  body('volunteersNeeded').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Volunteers needed must be a non-negative whole number.')
+  body('participantLimit').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Participant limit must be a non-negative whole number.')
 ];
 
 const idRule = [param('id').isMongoId().withMessage('Invalid activity id.')];

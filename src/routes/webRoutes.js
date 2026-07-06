@@ -12,5 +12,7 @@ router.get('/activities/:id', idRule, handleValidation, controller.show);
 router.get('/activities/:id/edit', requireAuth, idRule, handleValidation, controller.editForm);
 router.put('/activities/:id', requireAuth, idRule, activityRules, handleValidation, controller.update);
 router.delete('/activities/:id', requireAuth, idRule, handleValidation, controller.remove);
+router.post('/activities/:id/participants', requireAuth, idRule, handleValidation, controller.joinParticipants);
+router.delete('/activities/:id/participants', requireAuth, idRule, handleValidation, controller.leaveParticipants);
 
 module.exports = router;
