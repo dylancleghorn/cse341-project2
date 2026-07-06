@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+<section class="form-page">
+  <a class="back" href="<%= activity._id ? '/activities/' + activity._id : '/' %>">← Cancel</a>
+  <h1><%= title %></h1>
+  <% if (errors.length) { %>
+    <div class="error-summary" role="alert"><strong>Please correct the following:</strong><ul><% errors.forEach((error) => { %><li><%= error.message %></li><% }) %></ul></div>
+  <% } %>
+  <form class="activity-form" action="<%= activity._id ? '/activities/' + activity._id + '?_method=PUT' : '/activities' %>" method="post">
+    <label>Title<input name="title" maxlength="120" required value="<%= activity.title || '' %>"></label>
+    <label class="full">Description<textarea name="description" maxlength="2000" rows="6" required><%= activity.description || '' %></textarea></label>
+    <label>Category<select name="category" required><option value="">Choose a category</option><% categories.forEach((category) => { %><option value="<%= category %>" <%= activity.category === category ? 'selected' : '' %>><%= category %></option><% }) %></select></label>
+    <label>Status<select name="status" required><% statuses.forEach((status) => { %><option value="<%= status %>" <%= activity.status === status ? 'selected' : '' %>><%= status %></option><% }) %></select></label>
+    <label>Date<input type="date" name="date" required value="<%= activity.date ? (typeof activity.date === 'string' ? activity.date.slice(0, 10) : new Date(activity.date).toISOString().slice(0, 10)) : '' %>"></label>
+    <label>Time<input type="time" name="time" required value="<%= activity.time || '' %>"></label>
+    <label>Location<input name="location" maxlength="200" required value="<%= activity.location || '' %>"></label>
+    <label>Organizer<input name="organizer" maxlength="100" required value="<%= activity.organizer || currentUser.name %>"></label>
+    <label>Volunteers needed<input type="number" name="volunteersNeeded" min="0" step="1" value="<%= activity.volunteersNeeded ?? 0 %>"></label>
+    <div class="full"><button class="button" type="submit"><%= activity._id ? 'Save changes' : 'Create activity' %></button></div>
+  </form>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> | Ward Activity Board</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="brand" href="/">Ward Activity Board</a>
+      <div class="nav-links">
+        <a href="/api-docs">API Docs</a>
+        <% if (currentUser) { %>
+          <a class="button" href="/activities/new">New activity</a>
+          <span><%= currentUser.name %><% if (currentUser.role === 'admin') { %> (admin)<% } %></span>
+          <form action="/auth/logout" method="post"><button class="link-button" type="submit">Log out</button></form>
+        <% } else { %>
+          <a class="button" href="/auth/github">Log in with GitHub</a>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+  <main class="container">

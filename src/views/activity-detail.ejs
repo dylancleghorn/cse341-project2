@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<article class="detail">
+  <a class="back" href="/">← All activities</a>
+  <div class="card-top"><span class="badge"><%= activity.category %></span><span class="status status-<%= activity.status %>"><%= activity.status %></span></div>
+  <h1><%= activity.title %></h1>
+  <p class="lead"><%= activity.description %></p>
+  <dl class="detail-grid">
+    <div><dt>Date</dt><dd><%= activity.date.toLocaleDateString('en-US', { dateStyle: 'full', timeZone: 'UTC' }) %></dd></div>
+    <div><dt>Time</dt><dd><%= activity.time %></dd></div>
+    <div><dt>Location</dt><dd><%= activity.location %></dd></div>
+    <div><dt>Organizer</dt><dd><%= activity.organizer %></dd></div>
+    <div><dt>Volunteers</dt><dd><%= activity.volunteers.length %> / <%= activity.volunteersNeeded || 'unlimited' %></dd></div>
+    <div><dt>Created by</dt><dd><%= activity.createdBy.name %></dd></div>
+  </dl>
+  <% if (activity.volunteers.length) { %>
+    <h2>Volunteers</h2>
+    <ul><% activity.volunteers.forEach((volunteer) => { %><li><%= volunteer.name %></li><% }) %></ul>
+  <% } %>
+  <% if (canManage) { %>
+    <div class="actions">
+      <a class="button" href="/activities/<%= activity.id %>/edit">Edit activity</a>
+      <form action="/activities/<%= activity.id %>?_method=DELETE" method="post" onsubmit="return confirm('Delete this activity?');">
+        <button class="button danger" type="submit">Delete activity</button>
+      </form>
+    </div>
+  <% } %>
+</article>
+<%- include('partials/footer') %>

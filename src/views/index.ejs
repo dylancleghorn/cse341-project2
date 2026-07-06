@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<section class="hero">
+  <p class="eyebrow">Plan • Serve • Connect</p>
+  <h1>Ward activities in one place</h1>
+  <p>Browse upcoming activities, find ways to help, or sign in to organize something new.</p>
+</section>
+
+<section class="section-heading">
+  <h2>Upcoming activities</h2>
+  <span><%= activities.length %> listed</span>
+</section>
+
+<% if (!activities.length) { %>
+  <div class="empty-state"><h2>No activities yet</h2><p>Sign in to create the first one.</p></div>
+<% } %>
+<div class="card-grid">
+  <% activities.forEach((activity) => { %>
+    <article class="card">
+      <div class="card-top"><span class="badge"><%= activity.category %></span><span class="status status-<%= activity.status %>"><%= activity.status %></span></div>
+      <h2><a href="/activities/<%= activity.id %>"><%= activity.title %></a></h2>
+      <p><%= activity.description.length > 150 ? activity.description.slice(0, 147) + '…' : activity.description %></p>
+      <dl>
+        <div><dt>Date</dt><dd><%= activity.date.toLocaleDateString('en-US', { dateStyle: 'medium', timeZone: 'UTC' }) %> at <%= activity.time %></dd></div>
+        <div><dt>Location</dt><dd><%= activity.location %></dd></div>
+        <div><dt>Organizer</dt><dd><%= activity.organizer %></dd></div>
+      </dl>
+    </article>
+  <% }) %>
+</div>
+<%- include('partials/footer') %>
