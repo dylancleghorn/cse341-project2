@@ -1,7 +1,6 @@
 const fs = require('fs');
 const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' });
 
-const host = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const json = (schema) => ({ 'application/json': { schema } });
 const jsonExample = (schema, example) => ({ 'application/json': { schema, example } });
 const activity = { $ref: '#/components/schemas/Activity' };
@@ -39,7 +38,7 @@ const doc = {
     version: '1.0.0',
     description: 'CRUD and participant RSVP API. Sign in at /auth/github first; the browser session cookie authenticates protected Swagger requests.'
   },
-  servers: [{ url: `${host}/api` }],
+  servers: [{ url: '/api' }],
   tags: [
     { name: 'Activities', description: 'Activity CRUD operations' },
     { name: 'Participants', description: 'Activity RSVP operations' },

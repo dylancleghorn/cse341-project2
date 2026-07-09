@@ -21,5 +21,3 @@ services:
         sync: false
       - key: ADMIN_EMAILS
         sync: false
-      - key: BASE_URL
-        sync: false

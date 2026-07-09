@@ -22,7 +22,17 @@ async function migrate() {
     );
     migrated += 1;
   }
-  console.log(`Migrated ${migrated} activities to participant fields.`);
+  let reordered = 0;
+  const activities = Activity.collection.find({ __v: { $exists: true } });
+  for await (const document of activities) {
+    const keys = Object.keys(document);
+    if (keys.indexOf('__v') < keys.indexOf('participants')) {
+      const { _id, __v, ...fields } = document;
+      await Activity.collection.replaceOne({ _id }, { _id, ...fields, __v });
+      reordered += 1;
+    }
+  }
+  console.log(`Migrated ${migrated} activities and moved __v to the end of ${reordered} documents.`);
   await mongoose.disconnect();
 }
 

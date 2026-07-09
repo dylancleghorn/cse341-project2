@@ -43,7 +43,6 @@ Open `http://localhost:3000`. API documentation is at `http://localhost:3000/api
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth application secret |
 | `GITHUB_CALLBACK_URL` | Exact OAuth callback URL for local or deployed app |
 | `ADMIN_EMAILS` | Comma-separated GitHub email addresses that receive the admin role |
-| `BASE_URL` | Public base URL used by generated Swagger documentation |
 | `NODE_ENV` | Set to `production` on Render to enable secure cookies |
 | `PORT` | Local port; Render supplies this automatically |
 
@@ -76,7 +75,6 @@ Security controls include Helmet headers, rate limiting, 20 KB body limits, serv
 2. In MongoDB Atlas, permit connections from Render and create a least-privilege database user.
 3. In Render, choose **New → Blueprint**, connect the repository, and select `render.yaml`.
 4. Enter the secret environment variables listed by the blueprint. Set:
-   - `BASE_URL=https://YOUR-SERVICE.onrender.com`
    - `GITHUB_CALLBACK_URL=https://YOUR-SERVICE.onrender.com/auth/github/callback`
 5. Add that same callback URL to the GitHub OAuth App. Deploy and verify the homepage, OAuth login, every Swagger route, and MongoDB writes.
 
