@@ -7,7 +7,7 @@ router.get('/github', passport.authenticate('github', { scope: ['user:email'] })
 router.get('/github/callback',
   passport.authenticate('github', { failureRedirect: '/?login=failed' }),
   (req, res) => {
-    const destination = req.session.returnTo || '/';
+    const destination = req.session.returnTo || '/api-docs';
     delete req.session.returnTo;
     res.redirect(destination);
   });

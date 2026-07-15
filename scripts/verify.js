@@ -27,9 +27,11 @@ async function verify() {
 
   const swagger = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'swagger-output.json'), 'utf8'));
   const operationCount = Object.values(swagger.paths).reduce((count, route) => count + Object.keys(route).length, 0);
-  assert.equal(operationCount, 8, 'Swagger must document all eight required API operations.');
+  assert(operationCount >= 8, 'Swagger must document at least all eight required API operations.');
   assert(swagger.paths['/activities/'].post.requestBody, 'Swagger POST must document its request body.');
   assert(swagger.paths['/activities/{id}'].put.security, 'Swagger PUT must document authentication.');
+  assert(swagger.paths['/auth/github'].get, 'Swagger must document GitHub OAuth login.');
+  assert(swagger.paths['/auth/logout'].post, 'Swagger must document logout.');
   console.log('Model validation, EJS syntax, and Swagger contract checks passed.');
 }
 

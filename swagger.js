@@ -40,6 +40,7 @@ const doc = {
   },
   servers: [{ url: '/api' }],
   tags: [
+    { name: 'Auth', description: 'GitHub OAuth login and logout endpoints' },
     { name: 'Activities', description: 'Activity CRUD operations' },
     { name: 'Participants', description: 'Activity RSVP operations' },
     { name: 'Users', description: 'Authenticated user operations' }
@@ -77,6 +78,43 @@ const doc = {
     Activity: { $ref: '#/components/schemas/Activity' }, Error: { $ref: '#/components/schemas/Error' }
   },
   paths: {
+    '/auth/github': {
+      servers: [{ url: '/' }],
+      get: {
+        tags: ['Auth'],
+        summary: 'Start GitHub OAuth login',
+        description: 'Redirects the browser to GitHub. After login, users are redirected to Swagger UI unless a protected page stored a different return path.',
+        responses: {
+          302: { description: 'Redirect to GitHub OAuth authorization page' },
+          500: { description: 'OAuth configuration or server error', content: json(error) }
+        }
+      }
+    },
+    '/auth/github/callback': {
+      servers: [{ url: '/' }],
+      get: {
+        tags: ['Auth'],
+        summary: 'GitHub OAuth callback',
+        description: 'GitHub redirects users here after authentication. This route creates the server-side login session and redirects to Swagger UI by default.',
+        responses: {
+          302: { description: 'Redirect to the app after successful login or failed login' },
+          500: { description: 'OAuth callback or server error', content: json(error) }
+        }
+      }
+    },
+    '/auth/logout': {
+      servers: [{ url: '/' }],
+      post: {
+        tags: ['Auth'],
+        summary: 'Log out the current user',
+        description: 'Destroys the Passport session, clears the session cookie, and redirects to the home page.',
+        security: [{ cookieAuth: [] }],
+        responses: {
+          302: { description: 'Logged out and redirected to home page' },
+          500: { description: 'Logout or server error', content: json(error) }
+        }
+      }
+    },
     '/activities/': {
       get: {
         tags: ['Activities'], summary: 'List all activities',

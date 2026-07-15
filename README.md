@@ -61,7 +61,7 @@ Never commit `.env`. It is ignored by Git.
 | DELETE | `/api/activities/:id/participants` | Authenticated |
 | GET | `/api/users/me` | Authenticated |
 
-To test protected endpoints in Swagger, first open `/auth/github` in the same browser and log in. Swagger requests then use the secure session cookie.
+To test protected endpoints in Swagger, open `/auth/github` in the same browser and log in. After OAuth succeeds, the app redirects to `/api-docs`, and Swagger requests use the secure session cookie.
 
 ## Validation and security
 
