@@ -18,7 +18,8 @@ router.get('/github/callback',
     delete req.session.returnTo;
     res.redirect(destination);
   });
-router.post('/logout', (req, res, next) => {
+
+function logout(req, res, next) {
   req.logout((error) => {
     if (error) return next(error);
     if (!req.session) {
@@ -31,6 +32,9 @@ router.post('/logout', (req, res, next) => {
       return res.redirect('/api-docs');
     });
   });
-});
+}
+
+router.get('/logout', logout);
+router.post('/logout', logout);
 
 module.exports = router;

@@ -104,6 +104,16 @@ const doc = {
     },
     '/auth/logout': {
       servers: [{ url: '/' }],
+      get: {
+        tags: ['Auth'],
+        summary: 'Log out the current user from a browser',
+        description: 'Browser-friendly logout endpoint. Destroys the Passport session, clears the session cookie, and redirects to Swagger UI.',
+        security: [{ cookieAuth: [] }],
+        responses: {
+          302: { description: 'Logged out and redirected to Swagger UI' },
+          500: { description: 'Logout or server error', content: json(error) }
+        }
+      },
       post: {
         tags: ['Auth'],
         summary: 'Log out the current user',
