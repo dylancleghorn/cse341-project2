@@ -107,10 +107,10 @@ const doc = {
       post: {
         tags: ['Auth'],
         summary: 'Log out the current user',
-        description: 'Destroys the Passport session, clears the session cookie, and redirects to the home page.',
+        description: 'Destroys the Passport session, clears the session cookie, and redirects to Swagger UI.',
         security: [{ cookieAuth: [] }],
         responses: {
-          302: { description: 'Logged out and redirected to home page' },
+          302: { description: 'Logged out and redirected to Swagger UI' },
           500: { description: 'Logout or server error', content: json(error) }
         }
       }
