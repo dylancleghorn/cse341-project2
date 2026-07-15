@@ -19,7 +19,6 @@ Open `http://localhost:3000`. API documentation is at `http://localhost:3000/api
 | `GITHUB_CLIENT_ID` | GitHub OAuth application client ID |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth application secret |
 | `GITHUB_CALLBACK_URL` | Exact OAuth callback URL for local or deployed app |
-| `ADMIN_EMAILS` | Comma-separated GitHub email addresses that receive the admin role |
 | `NODE_ENV` | Set to `production` on Render to enable secure cookies |
 | `PORT` | Local port; Render supplies this automatically |
 
